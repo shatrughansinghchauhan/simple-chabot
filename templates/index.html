@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Flask Chatbot</title>
+</head>
+<body>
+    <h1>Simple Chatbot</h1>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        async function sendMessage() {
+            let message = document.getElementById("userInput").value;
+            let response = await fetch("/chat", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({message})
+            });
+            let data = await response.json();
+            document.getElementById("chatbox").innerHTML += "<p><b>You:</b> " + message + "</p>";
+            document.getElementById("chatbox").innerHTML += "<p><b>Bot:</b> " + data.reply + "</p>";
+            document.getElementById("userInput").value = ""; // Clear input field
+        }
+    </script>
+</body>
+</html>
