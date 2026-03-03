@@ -1,32 +1,23 @@
-from flask import Flask, request, jsonify
-import random
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-# Define simple rules for the chatbot
-responses = {
-    "hello": ["Hello!", "Hi there!", "Hey!"],
-    "how are you": ["I am a program, so I'm doing well, thank you!", "Doing great in binary!"],
-    "bye": ["Goodbye! Have a great day.", "See ya! Come back soon."],
-    "default": ["Tell me more.", "Why do you say that?", "Interesting... go on."]
-}
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-def get_bot_response(user_input):
-    user_input = user_input.lower()
-    for key in responses:
-        if key in user_input:
-            return random.choice(responses[key])
-    return random.choice(responses["default"])
-
-@app.route("/api/chat", methods=["POST"])
+@app.route("/chat", methods=["POST"])
 def chat():
-    user_input = request.json.get("message")
-    if not user_input:
-        return jsonify({"error": "No message provided"}), 400
-    
-    bot_response = get_bot_response(user_input)
-    return jsonify({"response": bot_response})
+    user_message = request.json.get("message")
+    # Basic chatbot logic: respond to "hello" or anything else
+    if user_message.lower() == "hello":
+        bot_reply = "Hi there! How can I help you today?"
+    else:
+        bot_reply = f"You said: '{user_message}'. I'm a simple bot and don't understand much yet."
+    return jsonify({"reply": bot_reply})
 
+if __name__ == "__main__":
+    app.run(debug=True)
 if __name__ == "__main__":
     # Note: Vercel runs the app differently; this is for local testing.
     app.run(debug=True)
